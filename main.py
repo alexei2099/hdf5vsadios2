@@ -3,6 +3,8 @@ import h5py
 import numpy as np
 import adios2 as ad2
 
+print(dir(ad2))
+
 def generate_dataset():
     return np.random.rand(1000, 1000)  # Example dataset of shape (1000, 1000)
 
