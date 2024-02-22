@@ -12,7 +12,8 @@ def write_hdf5(dataset):
         f.create_dataset('my_dataset', data=dataset)
 
 def write_adios(dataset):
-    io = adios2.declare_io('myio')
+    adios = adios2.Adios
+    io = adios.declare_io(myio)
     writer = io.Open('test_adios2.bp', adios2.Mode.Write)
     writer.Put('my_dataset', dataset)
     writer.Close()
@@ -23,12 +24,13 @@ def read_hdf5():
     return dataset
 
 def read_adios():
-    io = adios2.declare_io('myio')
+    adios = adios2.Adios
+    io = adios.declare_io(myio)
     reader = io.Open('test_adios2.bp', adios2.Mode.Read)
     variable = io.InquireVariable('my_dataset')
     shape = variable.Shape()
     dataset = np.zeros(shape, dtype=np.float64)
-    reader.Get('my_dataset', dataset, adios2.Mode.Sync)
+    reader.Get("my_dataset", dataset, adios2.Mode.Sync)
     reader.Close()
     return dataset
 
