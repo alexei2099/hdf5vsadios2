@@ -1,7 +1,7 @@
 import time
 import h5py
 import numpy as np
-import adios2
+import adios2 as ad2
 
 def generate_dataset():
     return np.random.rand(1000, 1000)  # Example dataset of shape (1000, 1000)
@@ -11,8 +11,8 @@ def write_hdf5(dataset):
         f.create_dataset('my_dataset', data=dataset)
 
 def write_adios(dataset):
-    with adios2.open('test_adios2.bp', 'w') as f:
-        f.write('my_dataset', dataset)
+    with ad2.open('test_adios2.bp', 'w') as fw:
+        fw.write('my_dataset', dataset)
 
 def read_hdf5():
     with h5py.File('test_hdf5.h5', 'r') as f:
@@ -20,8 +20,8 @@ def read_hdf5():
     return dataset
 
 def read_adios():
-    with adios2.open('test_adios2.bp', 'r') as f:
-        dataset = f.read('my_dataset')
+    with ad2.open('test_adios2.bp', 'r') as fr:
+        dataset = fr.read('my_dataset')
     return dataset
 
 if __name__ == "__main__":
