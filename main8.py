@@ -14,7 +14,12 @@ def print_dataset_size(dataset):
 
 def write_hdf5(dataset):
     with h5py.File('test_hdf5.h5', 'w') as f:
-        f.create_dataset('my_dataset', data=dataset)
+        f.create_dataset('my_dataset_hdf5', data=dataset)
+
+def read_hdf5():
+    with h5py.File('test_hdf5.h5', 'r') as f:
+        dataset = f['my_dataset_hdf5'][:]
+    return dataset
 
 def write_adios(dataset):
     with adios2.open('test_adios2.bp', 'w') as fw:
@@ -23,11 +28,6 @@ def write_adios(dataset):
             print("Escritura ADIOS2 completada con éxito.")
         except Exception as e:
             print("Error durante la escritura ADIOS2:", e)
-
-def read_hdf5():
-    with h5py.File('test_hdf5.h5', 'r') as f:
-        dataset = f['my_dataset'][:]
-    return dataset
 
 def read_adios():
     with adios2.open('test_adios2.bp', 'r') as fr:
