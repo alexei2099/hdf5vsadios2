@@ -4,7 +4,13 @@ import numpy as np
 import adios2 as ad2
 
 def generate_dataset():
-    return np.random.rand(1000, 1000)  # Example dataset of shape (1000, 1000)
+    # Calculate the number of elements for at least 100MB of data
+    num_elements = (100 * 2**20) // 8  # 100MB, with each float64 being 8 bytes
+    dimension = int(np.sqrt(num_elements))  # Square root to get dimensions for a square array
+    return np.random.rand(dimension, dimension)  # Adjusted to ensure the dataset is at least 100MB
+
+def print_dataset_size(dataset):
+    print("Dataset size:", dataset.nbytes / (2**20), "MB")
 
 def write_hdf5(dataset):
     with h5py.File('test_hdf5.h5', 'w') as f:
@@ -27,6 +33,8 @@ def read_adios():
 if __name__ == "__main__":
     dataset = generate_dataset()
 
+    print_dataset_size(dataset)
+
     start_time = time.time()
     write_hdf5(dataset)
     hdf5_write_time = time.time() - start_time
@@ -48,5 +56,5 @@ if __name__ == "__main__":
     print("ADIOS Read Time:", adios_read_time)
 
     # Verify data consistency (optional)
-    assert np.array_equal(dataset, hdf5_dataset)
-    assert np.array_equal(dataset, adios_dataset)
+    assert np.array_equal(dataset, hdf5_dataset), "HDF5 data mismatch"
+    assert np.array_equal(dataset, adios_dataset), "ADIOS data mismatch"
