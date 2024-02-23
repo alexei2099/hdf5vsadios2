@@ -38,25 +38,21 @@ if __name__ == "__main__":
     start_time = time.time()
     write_hdf5(dataset)
     hdf5_write_time = time.time() - start_time
-    print("HDF5 Write Time:", hdf5_write_time)
     print("HDF5 Write Time: {:.3f} seconds".format(hdf5_write_time))
-
-    start_time = time.time()
-    write_adios(dataset)
-    adios_write_time = time.time() - start_time
-    print("ADIOS Write Time:", adios_write_time)
-    print("ADIOS Write Time: {:.3f} seconds".format(adios_write_time))
 
     start_time = time.time()
     hdf5_dataset = read_hdf5()
     hdf5_read_time = time.time() - start_time
-    print("HDF5 Read Time:", hdf5_read_time)
     print("HDF5 Read Time: {:.3f} seconds".format(hdf5_read_time))
+
+    start_time = time.time()
+    write_adios(dataset)
+    adios_write_time = time.time() - start_time
+    print("ADIOS Write Time: {:.3f} seconds".format(adios_write_time))
 
     start_time = time.time()
     adios_dataset = read_adios()
     adios_read_time = time.time() - start_time
-    print("ADIOS Read Time:", adios_read_time)
     print("ADIOS Read Time: {:.3f} seconds".format(adios_read_time))
 
     # Verify data consistency (optional)
