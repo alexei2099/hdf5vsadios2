@@ -1,40 +1,43 @@
 import time
 import numpy as np
-import h5py
+import adios2
 
 def generate_dataset():
     # Generate a dataset of approximately 200MB
     num_elements = (200 * 1024 * 1024) // np.dtype(np.float64).itemsize
     return np.random.rand(num_elements).astype(np.float64)
 
-def write_hdf5(dataset, filename='dataset.h5'):
+def write_adios(dataset, filename='dataset_200mb.bp'):
+    shape = dataset.shape
     start_time = time.time()
-    with h5py.File(filename, 'w') as fw:
-        fw.create_dataset('my_dataset', data=dataset)
+    with adios2.open(filename, 'w') as fw:
+        fw.write('my_dataset', dataset, shape, [0], shape)
     write_time = time.time() - start_time
-    print(f"Write time with HDF5: {write_time} seconds.")
-    # No direct method to get written data size from h5py, so use dataset.nbytes
+    print(f"ADIOS2 write time: {write_time} seconds.")
+    return write_time  # Return the write time
 
-def read_hdf5(filename='dataset.h5'):
+def read_adios(filename='dataset_200mb.bp'):
     start_time = time.time()
-    with h5py.File(filename, 'r') as fr:
-        dataset_read = fr['my_dataset'][:]
+    with adios2.open(filename, 'r') as fr:
+        for step in fr:
+            dataset_read = step.read('my_dataset')
     read_time = time.time() - start_time
-    print(f"Read time with HDF5: {read_time} seconds.")
+    print(f"ADIOS2 read time: {read_time} seconds.")
     return dataset_read, read_time
 
 if __name__ == "__main__":
     dataset = generate_dataset()
-    original_size_MB = dataset.nbytes / (1024 * 1024)
-    print("Original dataset size:", original_size_MB, "MB")
+    original_size = dataset.nbytes / (1024 * 1024)
+    print("Original dataset size:", original_size, "MB")
 
-    write_hdf5(dataset)
-    dataset_read, read_time = read_hdf5()
+    write_time = write_adios(dataset)
+    print(f"Stored write time: {write_time} seconds.")
 
-    read_size_MB = dataset_read.nbytes / (1024 * 1024)
-    print("Size of the dataset after reading:", read_size_MB, "MB")
+    dataset_read, read_time = read_adios()
+    read_size = dataset_read.nbytes / (1024 * 1024)
+    print("Dataset size after reading:", read_size, "MB")
 
     # Verify that the original dataset size is the same after writing
-    assert original_size_MB == read_size_MB, "The dataset size after writing does not match the original."
+    assert original_size == read_size, "The dataset size after writing does not match the original."
 
     print("The dataset size is consistent before and after writing.")
