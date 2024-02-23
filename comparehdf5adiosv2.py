@@ -13,7 +13,7 @@ def write_hdf5(dataset):
 
 def write_adios(dataset):
     adios = adios2.Adios
-    io = adios.declare_io
+    io = adios.io
     print(io.__dir__())
     writer = io.Open('test_adios2.bp', adios2.Mode.Write)
     writer.Put('my_dataset', dataset)

@@ -5,7 +5,7 @@ import numpy as np
 data = np.random.rand(10)
 
 # Step 1: Create an ADIOS object
-with adios2.ADIOS() as adios_obj:
+with adios2.Adios as adios_obj:
     # Step 2: Define an IO object and set up a variable
     io = adios_obj.DeclareIO("my_io")
     var = io.DefineVariable("my_data", data.shape, (0,), data.shape, adios2.ConstantDims, data)
